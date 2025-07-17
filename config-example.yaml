@@ -1,0 +1,32 @@
+server:
+  address: ":8080"
+  log_level: debug
+
+defaults:
+  refresh_interval: 15m # go time duration
+  time_window:
+    back_days: 0
+    forward_days: 30
+
+caldav:
+- name: foobar
+  url: https://cal.example.com/dav.php/principals/user/
+  username: user
+  password: pass # uses os.ExpandEnv so you can use $ENV_VAR
+  refresh_interval: 15m # go time duration
+  time_window:
+    back_days: 0
+    forward_days: 30
+  calendars:
+  - Events
+  - "Default calendar"
+  combined: true  # enables /{name}/calendar.ics endpoint
+
+- name: another
+  url: https://another.example.com/caldav/
+  username: workuser
+  password: $WORK_PASSWORD
+  calendars:
+  - Calendar
+  - Meetings
+  combined: false  # only individual calendar endpoints enabled

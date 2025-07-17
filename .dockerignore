@@ -1,0 +1,26 @@
+# Ignore build artifacts
+caldav-busy
+
+# Ignore git
+.git
+.gitignore
+
+# Ignore configuration files with sensitive data
+config.yaml
+*.yaml
+!example.yaml
+
+# Ignore documentation
+README.md
+LICENSE
+
+# Ignore development files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db

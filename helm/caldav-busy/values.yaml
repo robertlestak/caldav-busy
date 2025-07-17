@@ -1,0 +1,106 @@
+replicaCount: 1
+
+image:
+  repository: robertlestak/caldav-busy
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 2000
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 8080
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# CalDAV configuration
+config:
+  server:
+    address: ":8080"
+    log_level: info
+  
+  defaults:
+    refresh_interval: 15m
+    time_window:
+      back_days: 0
+      forward_days: 30
+  
+  caldav:
+    - name: personal
+      url: https://cal.example.com/dav.php/principals/user/
+      username: user
+      password: pass
+      refresh_interval: 15m
+      time_window:
+        back_days: 0
+        forward_days: 30
+      calendars:
+        - Events
+        - "Default calendar"
+      combined: true
+    
+    - name: work
+      url: https://work.example.com/caldav/
+      username: workuser
+      password: ${WORK_PASSWORD}
+      calendars:
+        - Calendar
+        - Meetings
+      combined: false
+
+# Environment variables from secrets
+# Users can reference any secrets they create for variable substitution in config
+envFrom:
+  - secretRef:
+      name: caldav-secrets
+
+# Health check configuration
+healthCheck:
+  enabled: true
+  path: /health
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 1
+

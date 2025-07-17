@@ -1,0 +1,17 @@
+apiVersion: v2
+name: caldav-busy
+description: A Helm chart for caldav-busy - CalDAV free/busy service
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - caldav
+  - calendar
+  - freebusy
+  - multi-tenant
+home: https://github.com/robertlestak/caldav-busy
+sources:
+  - https://github.com/robertlestak/caldav-busy
+maintainers:
+  - name: Robert Lestak
+    email: robert@lestak.sh
