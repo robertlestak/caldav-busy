@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"time"
 
@@ -72,7 +71,7 @@ func LoadFromFile(filename string) (*Config, error) {
 	}
 
 	// Read file
-	data, err := ioutil.ReadFile(filename)
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read config file: %w", err)
 	}
@@ -201,5 +200,5 @@ caldav:
   combined: false  # only individual calendar endpoints enabled
 `
 
-	return ioutil.WriteFile(filename, []byte(example), 0644)
+	return os.WriteFile(filename, []byte(example), 0644)
 }

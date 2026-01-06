@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -54,6 +55,7 @@ func (s *Server) busyHandler(w http.ResponseWriter, r *http.Request) {
 	// /{name}/{calendar}.ics - specific calendar
 	pathParts := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
 	if len(pathParts) != 2 {
+		l.WithField("path", r.URL.Path).Warn("invalid path format")
 		http.Error(w, "Invalid path format. Expected: /{name}/calendar.ics or /{name}/{calendar}.ics", http.StatusBadRequest)
 		return
 	}
@@ -71,6 +73,15 @@ func (s *Server) busyHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Calendar name is required", http.StatusBadRequest)
 		return
 	}
+
+	// URL decode the calendar name to handle spaces and special characters
+	decodedCalendarName, err := url.QueryUnescape(calendarName)
+	if err != nil {
+		l.WithError(err).WithField("calendar_name", calendarName).Error("failed to URL decode calendar name")
+		http.Error(w, "Invalid calendar name", http.StatusBadRequest)
+		return
+	}
+	calendarName = decodedCalendarName
 
 	// Get CalDAV configuration
 	caldavCfg, err := s.config.GetCalDAVByName(caldavName)

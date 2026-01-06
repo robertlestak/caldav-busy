@@ -83,8 +83,11 @@ func (t *AuthTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	
 	// First try with digest authentication
 	resp, err := t.Digest.RoundTrip(req)
-	if err == nil {
+	if err == nil && resp.StatusCode != http.StatusUnauthorized {
 		return resp, nil
+	}
+	if resp != nil {
+		resp.Body.Close()
 	}
 	
 	// If digest fails, try basic authentication with the cloned request
